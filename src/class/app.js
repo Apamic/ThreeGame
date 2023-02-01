@@ -7,8 +7,8 @@ import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 
 class App {
     constructor() {
-        const container = document.createElement('div')
-        document.body.appendChild(container)
+        this.container = document.createElement('div')
+        document.body.appendChild( this.container)
 
         this.camera = new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,100)
         this.camera.position.set( 0,0,5)
@@ -33,7 +33,7 @@ class App {
         this.setEnvironment()
 
 
-        container.appendChild( this.renderer.domElement)
+        this.container.appendChild( this.renderer.domElement)
 
         this.renderer.setAnimationLoop(this.render.bind(this))
 
@@ -115,7 +115,7 @@ class App {
         const self = this
         loader.load('src/assets/hdr/venice_sunset_1k.hdr',(texture) => {
 
-            console.log(texture,'texture')
+            //console.log(texture,'texture')
 
             const envMap = pmremGenerator.fromEquirectangular(texture).texture
             pmremGenerator.dispose()
@@ -133,6 +133,11 @@ class App {
         const loader = new GLTFLoader().setPath('src/assets/plane/')
         loader.load('microplane.glb',glft => {
             this.scene.add(glft.scene)
+
+            const bbox = new THREE.Box3().setFromObject(glft.scene)
+
+            console.log(bbox,'bbox')
+
 
             this.LoadingBar.visible = false
 
@@ -160,6 +165,11 @@ class App {
         //this.mesh.rotateX(0.01)
         this.renderer.render(this.scene,this.camera)
     }
+
+    // remove() {
+    //     this.container.remove(this.container)
+    // }
+
 
 }
 

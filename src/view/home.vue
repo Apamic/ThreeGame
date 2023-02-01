@@ -5,7 +5,18 @@
 <!--    </div>-->
 </template>
 
-<script setup>
+<script type="module" setup>
+  import { App } from '../class/app.js'
+  import {onUnmounted} from "vue";
+  // document.addEventListener("DOMContentLoaded",() => {
+    const app = new App()
+    window.app = app
+  // })
+
+  // onUnmounted(() => {
+  //   window.app.remove()
+  // })
+
 
 </script>
 
