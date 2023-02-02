@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p id="instructions">Collect stars. <br>Avoid bombs. <br>Spacebar, mousedown or touch to climb</p>
+    <p id="instructions">收集星星. <br>避免炸弹. <br>空格键, 按下鼠标或触摸攀爬</p>
     <div id="info">
       <div id="life">
         <img src="../../assets/plane/plane-icon.png" /><div id="lives">3</div>
@@ -9,8 +9,8 @@
         <div id="score">0</div><img src="../../assets/plane/star-icon.png" />
       </div>
     </div>
-    <p id="gameover">Game over</p>
-    <button id="playBtn">PLAY</button>
+    <p id="gameover">游戏结束</p>
+    <button id="playBtn">play</button>
   </div>
 </template>
 
@@ -46,6 +46,7 @@
   font-size: 30px;
   color: darkblue;
   width: 300px;
+  line-height: 30px;
   left: 50%;
   transform: translateX(-50%);
   border-radius: 20px;
