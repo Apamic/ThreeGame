@@ -1,5 +1,7 @@
 import {Group, Vector3} from "three"
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
+import {Explosion} from "./Explosion";
+
 
 class Obstacles {
     constructor(game) {
@@ -11,6 +13,7 @@ class Obstacles {
         this.loadStar()
 
         this.tmpPos = new Vector3()
+        this.explosions = []
     }
 
 
@@ -130,6 +133,10 @@ class Obstacles {
 
         this.reset()
         this.ready = true
+    }
+
+    removeExplosion(explosion) {
+
     }
 
 

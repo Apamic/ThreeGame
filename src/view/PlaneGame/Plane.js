@@ -32,10 +32,11 @@ class Plane {
             this.plane = gltf.scene
             this.velocity = new Vector3(0,0,0.1)
 
-            //console.log(this.plane,'plane')
+            console.log(this.plane,'plane')
 
-            this.propellor = this.plane.getObjectByName('propellor')
-            //console.log(this.propellor,'propellor')
+            this.propeller = this.plane.getObjectByName('propeller')
+
+            //console.log(this.propeller,'propeller')
 
             this.ready = true
 
@@ -53,7 +54,7 @@ class Plane {
     }
 
     update(time) {
-        if (this.propellor !== undefined) this.propellor.rotateZ(1)
+        if (this.propeller !== undefined) this.propeller.rotateZ(1)
 
         if (this.game.active) {
             if (this.game.spaceKey) {
