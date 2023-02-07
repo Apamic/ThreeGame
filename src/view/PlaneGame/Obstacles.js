@@ -64,16 +64,29 @@ class Obstacles {
                     this.hit(child)
                     return true
                 }
-
             })
         }
 
+        this.explosions.forEach( explosion => {
+            explosion.update( dt );
+        });
 
     }
+
+    removeExplosion(explosion) {
+        const index = this.explosions.indexOf( explosion )
+        if (index != - 1) this.explosions.splice( index ,1)
+    }
+
 
     reset() {
         this.obstacleSpawn = {pos: 20,offset: 5}
         this.obstacles.forEach( obstacle => this.respawnObstacle(obstacle) )
+        let count = 0
+        while (this.explosions.length > 0 && count < 100) {
+            this.explosions[0].onComplete()
+            count++
+        }
     }
 
     respawnObstacle(obstacle) {
@@ -92,6 +105,7 @@ class Obstacles {
         if (obj.name == 'star') {
             this.game.incScore()
         } else {
+            this.explosions.push(new Explosion(obj,this))
             this.game.decLives()
         }
         obj.visible = false
@@ -134,11 +148,6 @@ class Obstacles {
         this.reset()
         this.ready = true
     }
-
-    removeExplosion(explosion) {
-
-    }
-
 
     loadBomb() {
         const loader = new GLTFLoader().setPath(`${this.assetsPath}plane/`)
