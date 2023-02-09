@@ -68,7 +68,7 @@ class Explosion {
 
         this.uniforms = {
             u_time: {value: 0},
-            u_opacity: {value: 0},
+            u_opacity: {value: 0.6},
             u_mouse: { value:{ x:0.0, y:0.0 }},
             u_resolution: { value:{ x:0, y:0 }},
             u_tex: {
@@ -81,7 +81,7 @@ class Explosion {
         const material = new ShaderMaterial({
             uniforms: this.uniforms,
             vertexShader: Explosion.vshader,
-            fragmentShader: Explosion.vshader,
+            fragmentShader: Explosion.fshader,
             opacity: 0.6,
             transparent: true
         })
@@ -109,7 +109,7 @@ class Explosion {
 
     update(time) {
         if (!this.active) return
-        this.uniforms.u_time.value += dt
+        this.uniforms.u_time.value += time
         this.uniforms.u_opacity.value = this.ball.material.opacity
 
         if (this.tweens.length < 2) {
