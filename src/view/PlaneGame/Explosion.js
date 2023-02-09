@@ -1,5 +1,6 @@
-import {IcosahedronGeometry, ShaderChunk, ShaderMaterial, TextureLoader} from "three";
+import {IcosahedronGeometry, Mesh, ShaderChunk, ShaderMaterial, TextureLoader} from "three";
 import { noise } from '../../libs/Noise.js'
+import { Tween } from '../../libs/Toon3D.js';
 
 class Explosion {
     static vshader = `
@@ -68,8 +69,10 @@ class Explosion {
         this.uniforms = {
             u_time: {value: 0},
             u_opacity: {value: 0},
+            u_mouse: { value:{ x:0.0, y:0.0 }},
+            u_resolution: { value:{ x:0, y:0 }},
             u_tex: {
-                value: new TextureLoader().load(`${game.assetsPath}plane/explosion.png`)
+                value: new TextureLoader().load(`src/assets/plane/explosion.png`)
             }
         }
 
@@ -79,6 +82,7 @@ class Explosion {
             uniforms: this.uniforms,
             vertexShader: Explosion.vshader,
             fragmentShader: Explosion.vshader,
+            opacity: 0.6,
             transparent: true
         })
 
@@ -87,14 +91,38 @@ class Explosion {
         const scale = 0.05
         this.ball.scale.set(scale,scale,scale)
         parent.add(this.ball)
+
+        this.tweens = []
+        this.tweens.push(new Tween(this.ball.scale,'x',0.2,1.5,this.onComplete.bind(this),'outQuad'))
+
+        this.active = true
     }
 
     onComplete() {
-
+        this.ball.parent.remove(this.ball)
+        this.tweens = []
+        this.active = false
+        this.ball.geometry.dispose()
+        this.ball.material.dispose()
+        if (this.obstacles) this.obstacles.removeExplosion(this)
     }
 
     update(time) {
+        if (!this.active) return
+        this.uniforms.u_time.value += dt
+        this.uniforms.u_opacity.value = this.ball.material.opacity
 
+        if (this.tweens.length < 2) {
+            if (this.uniforms.u_time.value > 1) {
+                this.tweens.push( new Tween(this.ball.material,'opacity',0,0.5))
+            }
+        }
+
+        this.tweens.forEach( tween => {
+            tween.update(time)
+        })
+
+        this.ball.scale.y = this.ball.scale.z = this.ball.scale.x
     }
 
 }

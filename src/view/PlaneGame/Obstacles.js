@@ -37,7 +37,7 @@ class Obstacles {
 
     }
 
-    update(pos) {
+    update(pos,time) {
         let collisionObstacle
 
         this.obstacles.forEach( obstacle => {
@@ -68,7 +68,7 @@ class Obstacles {
         }
 
         this.explosions.forEach( explosion => {
-            explosion.update( dt );
+            explosion.update( time );
         });
 
     }
