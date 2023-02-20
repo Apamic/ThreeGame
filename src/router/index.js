@@ -16,6 +16,11 @@ const routes = [
         name: 'shooting',
         component: () => import('@/view/ShootingGames/shooting.vue')
     },
+    {
+        path: '/videoSwitch',
+        name: 'videoSwitch',
+        component: () => import('@/view/VideoSwitch/videoSwitch.vue')
+    }
 ]
 
 

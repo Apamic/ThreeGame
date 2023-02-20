@@ -136,7 +136,7 @@ class App {
 
             const bbox = new THREE.Box3().setFromObject(glft.scene)
 
-            console.log(bbox,'bbox')
+            console.log(glft,'bbox')
 
 
             this.LoadingBar.visible = false

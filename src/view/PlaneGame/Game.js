@@ -165,7 +165,7 @@ class Game {
 
     gameOver() {
         this.active = false
-        
+
         const gameover = document.getElementById('gameover')
         const btn = document.getElementById('playBtn')
 
@@ -223,9 +223,10 @@ class Game {
             }
         }
 
+        const dt = this.clock.getDelta();
         const time = this.clock.getElapsedTime();
 
-        if (this.active) this.obstacles.update(this.plane.position)
+        if (this.active) this.obstacles.update(this.plane.position,dt)
 
         this.plane.update(time)
 

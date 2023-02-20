@@ -54,7 +54,7 @@ class Obstacles {
 
         if (collisionObstacle !== undefined) {
             const planePos = this.game.plane.position
-
+            console.log(collisionObstacle,'collisionObstacle')
             collisionObstacle.children.some( child => {
                 child.getWorldPosition(this.tmpPos)
                 const dist = this.tmpPos.distanceToSquared(planePos)
@@ -106,6 +106,7 @@ class Obstacles {
             this.game.incScore()
         } else {
             this.explosions.push(new Explosion(obj,this))
+            console.log(this.explosions)
             this.game.decLives()
         }
         obj.visible = false

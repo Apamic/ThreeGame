@@ -95,7 +95,7 @@ class Game {
         const loader = new GLTFLoader().setPath(`${this.assetsPath}factory/`)
         this.loadingBar.visible = true
 
-        loader.load('factory1.glb',glft => {
+        loader.load('factory2.glb',glft => {
             this.scene.add(glft.scene)
             this.factory = glft.scene
             this.fans = []
