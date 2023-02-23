@@ -3,7 +3,7 @@ import {LoadingBar} from "../../libs/LoadingBar";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader";
-
+import { Pathfinding } from '../../libs/pathfinding/Pathfinding.js';
 
 
 class Game {
@@ -63,6 +63,16 @@ class Game {
 
     }
 
+    initPathfinding(navmesh) {
+        this.pathfinder = new Pathfinding();
+        this.pathfinder.setZoneData('factory',Pathfinding.createZone(navmesh.geometry,0.02))
+        // if (this.npcHandler.gltf ! == undefined) {
+        //     this.npcHandler.initNPCs()
+        // }
+
+    }
+
+
     resize(){
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
@@ -87,14 +97,37 @@ class Game {
 
     }
 
+    loadEva() {
+
+    }
+
+    newAnim() {
+
+    }
+
+
+    set action(name) {
+
+    }
+
+
     load() {
         this.loadEnvironment()
+        this.npcHandler = new NPCHandler(this)
     }
+
+
+    startRendering() {
+        this.renderer.setAnimationLoop(this.render.bind(this))
+    }
+
 
     loadEnvironment() {
         const loader = new GLTFLoader().setPath(`${this.assetsPath}factory/`)
         this.loadingBar.visible = true
 
+
+        //factory1.glb factory2.glb
         loader.load('factory2.glb',glft => {
             this.scene.add(glft.scene)
             this.factory = glft.scene
@@ -104,7 +137,14 @@ class Game {
 
             glft.scene.traverse(child => {
                 if (child.isMesh) {
-                    if (child.name.includes('fan')) {
+                    if (child.name == 'NavMesh') {
+                        this.NavMesh = child
+                        this.NavMesh.geometry.rotateX(Math.PI/2)
+                        this.NavMesh.quaternion.identity()
+                        this.NavMesh.position.set(0,0,0)
+                        child.material.transparent = true
+                        child.material.opacity = 0.5
+                    } else if (child.name.includes('fan')) {
                         this.fans.push(child)
                     } else if (child.material.name.includes('elements2')) {
                         mergeObjects.elements2.push(child)
@@ -125,6 +165,8 @@ class Game {
                     }
                 }
             })
+
+            this.scene.add(this.NavMesh)
 
             for(let prop in mergeObjects){
                 const array = mergeObjects[prop];
@@ -155,6 +197,8 @@ class Game {
                 fan.rotateY(dt)
             })
         }
+
+        if (this.npcHandler !== undefined) this.npcHandler.update(dt)
 
         this.renderer.render( this.scene, this.camera )
     }

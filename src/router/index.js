@@ -20,7 +20,17 @@ const routes = [
         path: '/videoSwitch',
         name: 'videoSwitch',
         component: () => import('@/view/VideoSwitch/videoSwitch.vue')
-    }
+    },
+    {
+        path: '/videoSwitch',
+        name: 'videoSwitch',
+        component: () => import('@/view/VideoSwitch/videoSwitch.vue')
+    },
+    {
+        path: '/FixedPointStretchScaling',
+        name: 'FixedPointStretchScaling',
+        component: () => import('@/view/FixedPointStretchScaling/FixedPointStretchScaling.vue')
+    },
 ]
 
 
