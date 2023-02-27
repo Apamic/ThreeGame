@@ -2,8 +2,9 @@ import * as THREE from "three"
 import {LoadingBar} from "../../libs/LoadingBar";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
-import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader";
-import { Pathfinding } from '../../libs/pathfinding/Pathfinding.js';
+import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
+import { Pathfinding } from '../../libs/pathfinding/Pathfinding.js'
+import {NPCHandler} from './NPCHandler'
 
 
 class Game {
@@ -66,9 +67,9 @@ class Game {
     initPathfinding(navmesh) {
         this.pathfinder = new Pathfinding();
         this.pathfinder.setZoneData('factory',Pathfinding.createZone(navmesh.geometry,0.02))
-        // if (this.npcHandler.gltf ! == undefined) {
-        //     this.npcHandler.initNPCs()
-        // }
+        if (this.npcHandler.gltf !== undefined) {
+            this.npcHandler.initNPCs()
+        }
 
     }
 
@@ -167,6 +168,7 @@ class Game {
             })
 
             this.scene.add(this.NavMesh)
+            this.initPathfinding(this.NavMesh)
 
             for(let prop in mergeObjects){
                 const array = mergeObjects[prop];

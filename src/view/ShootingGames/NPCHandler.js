@@ -1,13 +1,16 @@
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 import {Raycaster} from "three";
+import {NPC} from "./NPC"
 
 
 class NPCHandler {
     constructor(game) {
         this.game = game
         this.loadingBar = this.game.loadingBar
+        // this.waypoints = game.waypoints
         this.load()
+        this.initMouseHandler()
     }
 
     initMouseHandler() {
@@ -25,11 +28,12 @@ class NPCHandler {
             raycaster.setFromCamera(mouse,self.game.camera)
 
             //计算焦点
-            const intersects = raycaster.intersectObject( self.game.navmesh )
+            const intersects = raycaster.intersectObject( self.game.NavMesh )
 
             if (intersects.length > 0) {
                 const pt = intersects[0].point
-                // self.npcs[0].newPath(pt,true)
+                console.log(pt)
+                self.npcs[0].newPath(pt,true)
             }
 
         }
@@ -37,13 +41,12 @@ class NPCHandler {
     }
 
 
-
     load() {
         const loader = new GLTFLoader().setPath(`${this.game.assetsPath}factory/`)
 
         const dracoLoader = new DRACOLoader()
-        // dracoLoader.setDecoderPath( '../../libs/three137/draco/' );
-        // loader.setDRACOLoader( dracoLoader );
+        dracoLoader.setDecoderPath( '/src/libs/three128/draco/' );
+        loader.setDRACOLoader( dracoLoader );
 
         this.loadingBar.visible = true
 
@@ -66,7 +69,7 @@ class NPCHandler {
     initNPCs(gltf = this.gltf) {
         const gltfs = [gltf]
 
-        this.waypoints = this.game.waypoints
+        // this.waypoints = this.game.waypoints
 
         this.npcs = []
 
@@ -80,19 +83,36 @@ class NPCHandler {
             })
 
             const options = {
-                object: object,
+                object,
                 speed: 0.8,
                 animations: gltf.animations,
                 app: this.game,
-                showPath: false,
+                showPath: true,
                 zone: 'factory',
                 name: 'swat-guy',
             }
 
+            const npc = new NPC(options)
+
+            npc.object.position.set(-7.607,0.017,-7.713)
+
+            this.npcs.push(npc)
 
         })
 
+        this.loadingBar.visible = !this.loadingBar.loaded
+
+        this.game.startRendering()
+    }
+
+
+    update(dt) {
+        if (this.npcs) {
+            this.npcs.forEach(npc => npc.update(dt))
+        }
     }
 
 
 }
+
+export {NPCHandler}
