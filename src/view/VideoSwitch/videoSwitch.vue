@@ -1,7 +1,7 @@
 <template>
   <div id="video-wrap">
-
-      <video class="video" v-for="(url,index) in videoList" :key="url" :id="url" controls :src="url">
+<!--      controls-->
+      <video class="video" v-for="(url,index) in videoList" :key="url"  controls :id="url" :src="url">
 
       </video>
 
@@ -15,7 +15,7 @@ export default {
     return {
 
       videoList: [
-          'https://ant-wh.oss-cn-hangzhou.aliyuncs.com/video/dong/5.mp4',
+          // 'https://ant-wh.oss-cn-hangzhou.aliyuncs.com/video/dong/5.mp4',
           'https://ant-wh.oss-cn-hangzhou.aliyuncs.com/video/dong/6.mp4',
           'https://ant-wh.oss-cn-hangzhou.aliyuncs.com/video/dong/7.mp4',
           'https://ant-wh.oss-cn-hangzhou.aliyuncs.com/video/dong/8.mp4',
@@ -59,19 +59,23 @@ export default {
       videoElements[this.current].style.display = 'block'
 
       if (this.first) {
-        videoElements[this.current].muted = true
+        //videoElements[this.current].muted = true
         this.first = false
       } else {
+        videoElements[this.current].play()
         videoElements[this.current].muted = false
       }
 
 
       // videoElements[this.current].muted = false
-      videoElements[this.current].play()
 
 
 
-      videoElements[this.current].addEventListener('ended',  ()=> { //结束
+      //videoElements[this.current].play()
+
+
+
+      videoElements[this.current].addEventListener('ended', ()=> { //结束
         console.log("播放结束");
         // videoElements[this.current].removeEventListener('ended',() => {
           let element = document.getElementById(videoElements[this.current].id)
@@ -85,7 +89,7 @@ export default {
           videos.src = 'https://ant-wh.oss-cn-hangzhou.aliyuncs.com/video/dong/10.mp4'
           videos.id = 'https://ant-wh.oss-cn-hangzhou.aliyuncs.com/video/dong/10.mp4' + Math.random()
           videos.className = 'video'
-          videos.controls = true
+          videos.controls = false
 
           document.getElementById('video-wrap').append(videos)
 
