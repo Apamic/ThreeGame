@@ -132,6 +132,38 @@ class NPC {
 
     }
 
+
+    set action(name) {
+        if (this.actionName == name.toLowerCase()) return
+
+        const cilp = this.animations[name.toLowerCase()]
+
+        if (cilp !== undefined) {
+            const action = this.mixer.clipAction(cilp)
+
+            if (name == 'shot') {
+                action.clampWhenFinished = true
+                action.setLoop( THREE.LoopOnce )
+            }
+
+            action.reset()
+            const nofade = this.actionName == 'shot'
+            this.actionName = name.toLowerCase()
+            action.play()
+
+            if (this.curAction) {
+                if (nofade) {
+                    this.curAction.enabled = false
+                } else {
+                    this.curAction.crossFadeTo(action, 0.5)
+                }
+            }
+
+            this.curAction = action
+        }
+    }
+
+
     update(dt) {
         const speed = this.speed
         const player = this.object
@@ -183,13 +215,8 @@ class NPC {
                     this.newPath(this.randomWaypoint)
                 }
             }
-
-
         }
-
     }
-
-
 }
 
 
