@@ -5,6 +5,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 import { Pathfinding } from '../../libs/pathfinding/Pathfinding.js'
 import {NPCHandler} from './NPCHandler'
+import {User} from "./User";
 
 
 class Game {
@@ -112,23 +113,10 @@ class Game {
 
     }
 
-    // loadEva() {
-    //
-    // }
-    //
-    // newAnim() {
-    //
-    // }
-    //
-    //
-    // set action(name) {
-    //
-    // }
-
-
     load() {
         this.loadEnvironment()
         this.npcHandler = new NPCHandler(this)
+        this.user = new User(this,new THREE.Vector3( -5.97, 0.021, -1.49),1.57)
     }
 
 
