@@ -2,8 +2,6 @@ import {AnimationMixer, Group, LoopOnce, MeshBasicMaterial, Quaternion, Raycaste
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 
-// import {draco} from "three/examples/jsm/libs/draco"
-
 class User {
     constructor(game,pos,heading) {
         this.root = new Group()
@@ -20,6 +18,9 @@ class User {
         this.loadingBar = game.loadingBar
 
         this.load()
+        this.initMouseHandler()
+        this.initRifleDirection()
+
     }
 
 
@@ -46,7 +47,7 @@ class User {
 
         function raycast(e) {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1
-            mouse.y = (e.clientY / window.innerHeight) * 2 + 1
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
 
             //从相机位置和鼠标坐标设置挑选射线
             self.raycaster.setFromCamera(mouse, self.game.camera)
@@ -56,9 +57,10 @@ class User {
 
             if (intersects.length > 0) {
                 const pt = intersects[0].point
-                console.log(pt)
+                //console.log(pt)
 
                 self.root.position.copy(pt)
+                //console.log(self.camera.quaternion,'quaternion')
             }
         }
     }
@@ -102,11 +104,13 @@ class User {
                 this.animations[animation.name.toLowerCase()] = animation
             })
 
+            //console.log(this.animations)
+
             this.mixer = new AnimationMixer(gltf.scene)
 
             this.action = 'idle'
 
-            this.ready = true
+            //this.ready = true
 
         },xhr => { // 加载正在进行时调用
             this.loadingBar.update( 'user', xhr.loaded, xhr.total )
@@ -124,6 +128,15 @@ class User {
         const clip = this.animations[name.toLowerCase()]
 
         if (clip !== undefined) {
+            if (this.rifle && this.rifleDirection) {
+                const q = this.rifleDirection[name.toLowerCase()]
+
+                if (q !== undefined) {
+                    this.rifle.quaternion.copy(q)
+                    this.rifle.rotateX(1.57)
+                }
+            }
+
             const action = this.mixer.clipAction(clip)
 
             if (name == 'shot') {
@@ -145,15 +158,6 @@ class User {
             }
 
             this.curAction = action
-
-            if (this.rifle && this.rifleDirection) {
-                const q = this.rifleDirection[name.toLowerCase()]
-
-                if (q !== undefined) {
-                    this.rifle.quaternion.copy(q)
-                    this.rifle.rotateX(1.57)
-                }
-            }
         }
     }
 

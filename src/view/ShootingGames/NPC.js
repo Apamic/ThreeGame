@@ -37,7 +37,7 @@ class NPC {
         this.object.lookAt(pt)
 
         if (options.animations) {
-            console.log(options.animations,'animations')
+            //console.log(options.animations,'animations')
             //使用此选项可直接设置多个动画
             this.mixer = new THREE.AnimationMixer(options.object)
             options.animations.forEach((animations) => {
