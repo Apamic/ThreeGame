@@ -8,9 +8,9 @@ class NPCHandler {
     constructor(game) {
         this.game = game
         this.loadingBar = this.game.loadingBar
-        // this.waypoints = game.waypoints
+        this.waypoints = game.waypoints
         this.load()
-        this.initMouseHandler()
+        //this.initMouseHandler()
     }
 
     initMouseHandler() {
@@ -68,10 +68,12 @@ class NPCHandler {
 
     initNPCs(gltf = this.gltf) {
         const gltfs = [gltf]
-
-        // this.waypoints = this.game.waypoints
-
+        this.waypoints = this.game.waypoints
         this.npcs = []
+
+        for (let i = 0;i < 3;i++) {
+            gltfs.push(this.cloneGLTF(gltf))
+        }
 
         gltfs.forEach(gltf => {
             const object = gltf.scene
@@ -87,14 +89,21 @@ class NPCHandler {
                 speed: 0.8,
                 animations: gltf.animations,
                 app: this.game,
-                showPath: true,
+                showPath: false,
+                waypoints: this.waypoints,
                 zone: 'factory',
                 name: 'swat-guy',
             }
 
             const npc = new NPC(options)
 
-            npc.object.position.set(-7.607,0.017,-7.713)
+            // npc.object.position.set(-7.607,0.017,-7.713)
+
+            npc.object.position.copy(this.randomWaypoint)
+            npc.newPath(this.randomWaypoint)
+
+
+            //npc.active = 'idle'
 
             this.npcs.push(npc)
 
@@ -149,6 +158,11 @@ class NPCHandler {
         }
 
         return clone
+    }
+
+    get randomWaypoint() {
+        const index = Math.floor(Math.random() * this.waypoints.length)
+        return this.waypoints[index]
     }
 
 

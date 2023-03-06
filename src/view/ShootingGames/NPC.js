@@ -18,9 +18,9 @@ class NPC {
 
         this.showPath = options.showPath | false
 
-        // this.waypoints = options.waypoints
+        this.waypoints = options.waypoints
 
-        // this.dead = false
+        this.dead = true
 
         this.speed = options.speed
 
@@ -182,7 +182,7 @@ class NPC {
                 const prevDistanceSq = player.position.distanceToSquared(targetPosition)
                 vel.normalize()
 
-                //移动玩家到目标
+                //转身速率
                 if (this.quaternion) {
                     player.quaternion.slerp(this.quaternion,0.1)
                 }
