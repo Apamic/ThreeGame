@@ -79,7 +79,13 @@ class Controller {
     }
 
     showTouchController(mode) {
+        if (this.touchController == undefined) {
+            return
+        }
 
+        this.touchController.joystick1.visable = mode
+        this.touchController.joystick2.visable = mode
+        this.touchController.fireBtn.style.display = mode ? 'block' : 'none'
     }
 
     keyDown(e) {
@@ -165,10 +171,88 @@ class Controller {
     }
 
     keyHandler() {
+        if (this.keys.w) this.move.up += 0.1
+        if (this.keys.s) this.move.up -= 0.1
+        if (this.keys.a) this.move.right += 0.1
+        if (this.keys.d) this.move.right -= 0.1
+
+        if (this.move.up > 1) this.move.up = 1
+        if (this.move.up < -1) this.move.up = -1
+        if (this.move.right > 1) this.move.right = 1
+        if (this.move.right < -1) this.move.right = -1
 
     }
 
-    update(dt=0.0167){
+    update(dt=0.0167) {
+
+        let playerMoved = false
+        let speed
+
+        if (this.gamepad) {
+            this.gamepadHandler()
+        } else if (this.keys) {
+            this.keyHandler()
+        }
+
+        if (this.move.up != 0) {
+            const forward = this.forward.clone().applyQuaternion(this.target.quaternion)
+
+            speed = this.move.up > 0 ? this.speed * dt : this.speed * dt * 0.3
+            speed *= this.move.up
+            const pos = this.target.position.clone().add(forward.multiplyScalar(speed))
+            pos.y += 2
+
+            this.raycaster.set(pos,this.down)
+
+            const intersects = this.raycaster.intersectObject(this.NavMesh)
+
+            if (intersects.length > 0) {
+                this.target.position.copy(intersects[0].point)
+                playerMoved = true
+            }
+
+        }
+
+
+        if (Math.abs(this.move.right) > 0.1) {
+            const theta = dt * (this.move.right - 0.1) * 1
+            this.target.rotateY(theta)
+            playerMoved = true
+        }
+
+        if (playerMoved) {
+            this.cameraBase.getWorldPosition(this.tmpVec3)
+            this.camera.position.lerp(this.tmpVec3,0.7)
+
+            let run = false
+
+            if (speed > 0.03) {
+                if (this.overRunSpeedTime) {
+                    const elapsedTime = this.clock.elapsedTime - this.overRunSpeedTime
+                    run = elapsedTime > 0.5
+                } else {
+                    this.overRunSpeedTime = this.clock.getElapsedTime()
+                }
+            } else {
+                delete this.overRunSpeedTime
+            }
+
+            if (run) {
+                this.user.action = 'run'
+            } else {
+                this.user.action = 'walk'
+            }
+        } else {
+            if (this.user !== undefined) this.user.action = 'idle'
+        }
+
+        if (this.look.up == 0 && this.look.right == 0) {
+            let lerpSpeed = 0.7
+            this.cameraBase.getWorldPosition(this.tmpVec3)
+            this.cameraBase.getWorldQuaternion(this.tmpQuat)
+
+
+        }
 
     }
 
