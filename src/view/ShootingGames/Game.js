@@ -6,6 +6,7 @@ import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 import { Pathfinding } from '../../libs/pathfinding/Pathfinding.js'
 import {NPCHandler} from './NPCHandler'
 import {User} from "./User";
+import { Controller } from './Controller.js'
 
 
 class Game {
@@ -20,9 +21,12 @@ class Game {
 
         this.assetsPath = 'src/assets/'
         this.camera = new THREE.PerspectiveCamera(45,window.innerWidth / window.innerHeight,0.1,500)
-        this.camera.position.set(-11,1.5,-1.5)
+        // this.camera.position.set(-11,1.5,-1.5)
 
-        //this.camera.position.set(-0,-0,-0)
+        this.camera.position.set( -10.6, 1.6, -1.46 );
+        this.camera.rotation.y = -Math.PI*0.5;
+
+
 
         let col = 0x201510
         this.scene = new THREE.Scene()
@@ -59,7 +63,7 @@ class Game {
         this.renderer.outputEncoding = THREE.sRGBEncoding
         container.appendChild(this.renderer.domElement)
 
-        const controls = new OrbitControls( this.camera, this.renderer.domElement )
+        //const controls = new OrbitControls( this.camera, this.renderer.domElement )
 
         this.load()
 
@@ -116,7 +120,7 @@ class Game {
     load() {
         this.loadEnvironment()
         this.npcHandler = new NPCHandler(this)
-        this.user = new User(this,new THREE.Vector3( -5.97, 0.021, -1.49),0)
+        this.user = new User(this,new THREE.Vector3( -5.97, 0.021, -1.49),1.57)
     }
 
 
@@ -183,8 +187,11 @@ class Game {
                     }
                 });
             }
+
+            this.controller = new Controller(this)
+
             this.loadingBar.visible = false
-            this.renderer.setAnimationLoop( this.render.bind(this) )
+            this.renderer.setAnimationLoop( this.render.bind(this))
 
         },xhr => {
             this.loadingBar.update('environment',xhr.loaded,xhr.total)
@@ -204,7 +211,14 @@ class Game {
 
         if (this.npcHandler !== undefined) this.npcHandler.update(dt)
 
-        if (this.user !== undefined) this.user.update(dt)
+        if (this.user !== undefined && this.user.ready) {
+            this.user.update(dt)
+
+            if (this.controller !== undefined) {
+                this.controller.update(dt)
+            }
+
+        }
 
         this.renderer.render( this.scene, this.camera )
     }

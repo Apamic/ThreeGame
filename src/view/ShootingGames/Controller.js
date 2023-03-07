@@ -1,4 +1,6 @@
 import {Object3D, Quaternion, Raycaster, Vector3} from "three";
+import { JoyStick } from '../../libs/JoyStick.js';
+
 
 class Controller {
     constructor(game) {
@@ -25,10 +27,11 @@ class Controller {
         this.tmpVec3 = new Vector3()
         this.tmpQuat = new Quaternion()
 
+        //用于在look事件后将相机返回到其基本位置和方向
         this.cameraBase = new Object3D()
         this.cameraBase.position.copy(this.camera.position)
         this.cameraBase.quaternion.copy(this.camera.quaternion)
-        this.target.attach( this.cameraBase)
+        this.target.attach(this.cameraBase)
 
         this.yAxis = new Vector3(0,1,0)
         this.xAxis = new Vector3(1,0,0)
@@ -159,11 +162,13 @@ class Controller {
     }
 
     onMove(up, right) {
-
+        this.move.up = up
+        this.move.right = - right
     }
 
-    onLook() {
-
+    onLook(up, right) {
+        this.look.up = up * 0.5
+        this.look.right = -right
     }
 
     gamepadHandler() {
@@ -210,7 +215,6 @@ class Controller {
                 this.target.position.copy(intersects[0].point)
                 playerMoved = true
             }
-
         }
 
 
@@ -250,8 +254,13 @@ class Controller {
             let lerpSpeed = 0.7
             this.cameraBase.getWorldPosition(this.tmpVec3)
             this.cameraBase.getWorldQuaternion(this.tmpQuat)
-
-
+            this.camera.position.lerp(this.tmpVec3,lerpSpeed)
+            this.camera.quaternion.slerp(this.tmpQuat,lerpSpeed)
+        } else {
+            const delta = 1 * dt
+            this.camera.rotateOnWorldAxis(this.yAxis,this.look.right * delta)
+            const cameraXAxis = this.xAxis.clone().applyQuaternion(this.camera.quaternion)
+            this.camera.rotateOnWorldAxis(cameraXAxis,this.look.up * delta)
         }
 
     }

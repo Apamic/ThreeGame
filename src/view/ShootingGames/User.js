@@ -110,7 +110,7 @@ class User {
 
             this.action = 'idle'
 
-            //this.ready = true
+            this.ready = true
 
         },xhr => { // 加载正在进行时调用
             this.loadingBar.update( 'user', xhr.loaded, xhr.total )
