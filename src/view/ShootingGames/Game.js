@@ -67,9 +67,32 @@ class Game {
 
         this.load()
 
+        this.raycaster = new THREE.Raycaster()
+        this.tmpVec = new THREE.Vector3()
+
         window.addEventListener('resize', this.resize.bind(this) )
 
     }
+
+
+    seeUser(pos,seethrough = false) {
+
+        this.tmpVec.copy(this.user.position).sub(pos).normalize()
+        this.raycaster.set(pos,this.tmpVec)
+
+        const intersects = this.raycaster.intersectObjects(this.factory.children,true)
+
+        let userVisiable = true
+
+        if (intersects.length > 0) {
+            const dist = this.tmpVec.copy(this.user.position).distanceTo(pos)
+
+            userVisiable = (intersects[0].distance > dist)
+        }
+
+        return userVisiable
+    }
+
 
     initPathfinding(navmesh) {
 
@@ -125,7 +148,11 @@ class Game {
 
 
     startRendering() {
-        this.renderer.setAnimationLoop(this.render.bind(this))
+        if (this.npcHandler.ready && this.user.ready) {
+            this.controller = new Controller(this)
+            this.renderer.setAnimationLoop(this.render.bind(this))
+        }
+
     }
 
 
@@ -150,7 +177,8 @@ class Game {
                         this.NavMesh.quaternion.identity()
                         this.NavMesh.position.set(0,0,0)
                         child.material.transparent = true
-                        child.material.opacity = 0.6
+                        //child.material.opacity = 0.6
+                        child.material.opacity = 0
                     } else if (child.name.includes('fan')) {
                         this.fans.push(child)
                     } else if (child.material.name.includes('elements2')) {
@@ -188,7 +216,6 @@ class Game {
                 });
             }
 
-            this.controller = new Controller(this)
 
             this.loadingBar.visible = false
             this.renderer.setAnimationLoop( this.render.bind(this))

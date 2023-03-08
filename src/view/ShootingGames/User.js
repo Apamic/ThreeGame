@@ -18,7 +18,7 @@ class User {
         this.loadingBar = game.loadingBar
 
         this.load()
-        this.initMouseHandler()
+        //this.initMouseHandler()
         this.initRifleDirection()
 
     }
@@ -69,6 +69,10 @@ class User {
         this.root.position.copy(pos)
     }
 
+    get position(){
+        return this.root.position
+    }
+
     addSphere() {
         const geometry = new SphereGeometry(0.1,8,8)
         const material = new MeshBasicMaterial( { color: 0xFF0000 })
@@ -112,6 +116,7 @@ class User {
 
             this.ready = true
 
+            this.game.startRendering()
         },xhr => { // 加载正在进行时调用
             this.loadingBar.update( 'user', xhr.loaded, xhr.total )
         },err => { //加载有错误时调用
@@ -128,15 +133,6 @@ class User {
         const clip = this.animations[name.toLowerCase()]
 
         if (clip !== undefined) {
-            if (this.rifle && this.rifleDirection) {
-                const q = this.rifleDirection[name.toLowerCase()]
-
-                if (q !== undefined) {
-                    this.rifle.quaternion.copy(q)
-                    this.rifle.rotateX(1.57)
-                }
-            }
-
             const action = this.mixer.clipAction(clip)
 
             if (name == 'shot') {
@@ -158,6 +154,25 @@ class User {
             }
 
             this.curAction = action
+
+            if (this.rifle && this.rifleDirection) {
+                const q = this.rifleDirection[name.toLowerCase()]
+
+                if (q !== undefined) {
+                    const start = new Quaternion()
+                    start.copy(this.rifle.quaternion)
+
+                    this.rifle.quaternion.copy(q)
+                    this.rifle.rotateX(1.57)
+
+                    const end = new Quaternion()
+                    end.copy(this.rifle.quaternion)
+                    this.rotateRifle = {start,end,time: 0}
+                    this.rifle.quaternion.copy(start)
+
+                }
+            }
+
         }
     }
 
@@ -165,6 +180,17 @@ class User {
     update(dt) {
         if (this.mixer) {
             this.mixer.update(dt)
+        }
+
+        if (this.rotateRifle !== undefined) {
+            this.rotateRifle.time += dt
+
+            if (this.rotateRifle.time > 0.5) {
+                this.rifle.quaternion.copy(this.rotateRifle.end)
+                delete this.rotateRifle
+            } else {
+                this.rifle.quaternion.slerpQuaternions(this.rotateRifle.start,this.rotateRifle.end,this.rotateRifle.time * 2)
+            }
         }
     }
 

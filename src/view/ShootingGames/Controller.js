@@ -1,4 +1,4 @@
-import {Object3D, Quaternion, Raycaster, Vector3} from "three";
+import {Camera, Object3D, Quaternion, Raycaster, Vector3} from "three";
 import { JoyStick } from '../../libs/JoyStick.js';
 
 
@@ -35,6 +35,13 @@ class Controller {
         this.cameraBase.quaternion.copy(this.camera.quaternion)
         this.target.attach(this.cameraBase)
 
+        this.cameraHigh = new Camera()
+        this.cameraHigh.position.copy(this.camera.position)
+        this.cameraHigh.position.y += 10
+        this.cameraHigh.lookAt(this.target.position)
+        this.target.attach(this.cameraHigh)
+
+
         this.yAxis = new Vector3(0,1,0)
         this.xAxis = new Vector3(1,0,0)
         this.forward = new Vector3(0,0,1)
@@ -46,7 +53,7 @@ class Controller {
         this.checkForGamepad()
 
 
-        if ('ontouchstart' in document.documentElement) {
+        if (true){ //('ontouchstart' in document.documentElement) {
             this.initOnscreenController()
         } else {
             this.initKeyboardControl()
@@ -55,6 +62,33 @@ class Controller {
     }
 
     initOnscreenController() {
+        const option1 = {
+            left: true,
+            app: this,
+            onMove: this.onMove
+        }
+
+        const joystick1 = new JoyStick(option1)
+
+        const option2 = {
+            right: true,
+            app: this,
+            onMove: this.onLook
+        }
+
+        const joystick2 = new JoyStick(option2)
+
+        const fireBtn = document.createElement('div')
+        fireBtn.style.cssText = "position:absolute; bottom:55px; width:40px; height:40px; background:#FFFFFF; " +
+                                "border:#444 solid medium; border-radius:50%; left:50%; transform:translateX(-50%);";
+        fireBtn.addEventListener('click',this.fire.bind(this))
+        document.body.appendChild(fireBtn)
+
+        this.touchController = {
+            joystick1,
+            joystick2,
+            fireBtn
+        }
 
     }
 
@@ -80,6 +114,28 @@ class Controller {
     }
 
     checkForGamepad() {
+        const gamepads = {}
+
+        const self = this
+
+        function gamepadConnect(event,connecting) {
+            const gamepad = event.gamepad
+
+            if (connecting) {
+                gamepads[gamepad.index] = gamepad
+                self.gamepad = gamepad
+
+                if (this.touchController) self.showTouchController(false)
+
+            } else {
+                delete self.gamepad
+                delete gamepads[gamepad.index]
+                self.showTouchController(true)
+            }
+        }
+
+        window.addEventListener('gamepadconnected',(e) => gamepadConnect(e,true),false)
+        window.addEventListener('gamepaddisconnected',(e) => gamepadConnect(e,false),false)
 
     }
 
@@ -170,11 +226,21 @@ class Controller {
 
     onLook(up, right) {
         this.look.up = up * 0.5
+        //this.look.up = up
         this.look.right = -right
     }
 
     gamepadHandler() {
-
+        const gamepads = navigator.getGamepads()
+        const gamepad = gamepads[this.gamepad.index]
+        const leftStickX = gamepad.axes[0]
+        const leftStickY = gamepad.axes[1]
+        const rightStickX = gamepad.axes[2]
+        const rightStickY = gamepad.axes[3]
+        const fire = gamepad.buttons[7].pressed
+        this.onMove(-leftStickY,leftStickX)
+        this.onLook(-rightStickY,rightStickX)
+        if (fire) this.fire()
     }
 
     keyHandler() {
@@ -256,7 +322,15 @@ class Controller {
         if (this.look.up == 0 && this.look.right == 0) {
             let lerpSpeed = 0.7
             this.cameraBase.getWorldPosition(this.tmpVec3)
-            this.cameraBase.getWorldQuaternion(this.tmpQuat)
+
+            if (this.game.seeUser(this.tmpVec3)) {
+                this.cameraBase.getWorldQuaternion(this.tmpQuat)
+
+            } else {
+                this.cameraHigh.getWorldPosition(this.tmpVec3)
+                this.cameraHigh.getWorldQuaternion(this.tmpQuat)
+            }
+
             this.camera.position.lerp(this.tmpVec3,lerpSpeed)
             this.camera.quaternion.slerp(this.tmpQuat,lerpSpeed)
         } else {
@@ -264,6 +338,7 @@ class Controller {
             this.camera.rotateOnWorldAxis(this.yAxis,this.look.right * delta)
             const cameraXAxis = this.xAxis.clone().applyQuaternion(this.camera.quaternion)
             this.camera.rotateOnWorldAxis(cameraXAxis,this.look.up * delta)
+
         }
 
     }
