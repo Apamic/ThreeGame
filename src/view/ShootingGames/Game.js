@@ -27,7 +27,6 @@ class Game {
         this.camera.rotation.y = -Math.PI*0.5;
 
 
-
         let col = 0x201510
         this.scene = new THREE.Scene()
         this.scene.background = new THREE.Color(col)
@@ -77,6 +76,15 @@ class Game {
 
     seeUser(pos,seethrough = false) {
 
+        if (this.seethrough) {
+            this.seethrough.forEach( child => {
+                child.material.transparent = false
+                child.material.opacity = 1
+            })
+            delete this.seethrough
+        }
+
+
         this.tmpVec.copy(this.user.position).sub(pos).normalize()
         this.raycaster.set(pos,this.tmpVec)
 
@@ -87,7 +95,23 @@ class Game {
         if (intersects.length > 0) {
             const dist = this.tmpVec.copy(this.user.position).distanceTo(pos)
 
-            userVisiable = (intersects[0].distance > dist)
+            if (seethrough) {
+                this.seethrough = []
+
+                intersects.some( intersect => {
+                    if (intersect.distance < dist) {
+                        this.seethrough.push(intersect.object)
+                        intersect.object.material.transparent = true
+                        intersect.object.material.opacity = 0.3
+                    } else {
+                        return true
+                    }
+                })
+            } else {
+                userVisiable = (intersects[0].distance > dist)
+            }
+
+
         }
 
         return userVisiable
