@@ -25,6 +25,8 @@ class Controller {
         }
 
         this.tmpVec3 = new Vector3()
+        //console.log(this.tmpVec3)
+
         this.tmpQuat = new Quaternion()
 
         //用于在look事件后将相机返回到其基本位置和方向
@@ -217,7 +219,6 @@ class Controller {
             }
         }
 
-
         if (Math.abs(this.move.right) > 0.1) {
             const theta = dt * (this.move.right - 0.1) * 1
             this.target.rotateY(theta)
@@ -225,7 +226,9 @@ class Controller {
         }
 
         if (playerMoved) {
+            //console.log( this.tmpVec3,'坐标')
             this.cameraBase.getWorldPosition(this.tmpVec3)
+
             this.camera.position.lerp(this.tmpVec3,0.7)
 
             let run = false

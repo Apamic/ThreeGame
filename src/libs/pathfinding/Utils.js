@@ -1,4 +1,4 @@
-import { BufferAttribute, BufferGeometry, Float32BufferAttribute } from '../three137/three.module.js';
+import { BufferAttribute, BufferGeometry, Float32BufferAttribute } from 'three';
 
 class Utils {
 
@@ -67,7 +67,7 @@ class Utils {
   static prepGeometry( geometry, tolerance = 1e-4 ){
   	tolerance = Math.max( tolerance, Number.EPSILON );
     tolerance *= tolerance;
-    
+
     // Generate an index buffer if the geometry doesn't have one, or optimize it
     // if it's already available.
     const indices = geometry.getIndex();
@@ -78,9 +78,9 @@ class Utils {
     const newIndices = [];
 
     for ( let i = 0; i < vertexCount; i ++ ) {
-      const index = (indices) ? indices.getX(i) : i;	
+      const index = (indices) ? indices.getX(i) : i;
       const pos = { x:positions.getX(index), y:positions.getY(index), z:positions.getZ(index), index:newVertices.length};
-    
+
       if (!newVertices.some( p => {
           if (Utils.distanceToSquared(p, pos)<tolerance ){
             newIndices.push(p.index);
@@ -93,16 +93,16 @@ class Utils {
     }
 
     const vertices = [];
-    
+
     newVertices.forEach( p => {
       vertices.push(p.x);
       vertices.push(p.y);
       vertices.push(p.z);
     });
-    
+
     const result = new BufferGeometry();
-    
-    result.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );	
+
+    result.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
     result.setIndex( newIndices );
 
     return result;

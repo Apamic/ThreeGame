@@ -58,7 +58,7 @@ class Plane {
 
         if (this.game.active) {
             if (this.game.spaceKey) {
-                 this.velocity.y += 0.001
+                this.velocity.y += 0.001
             } else {
                 this.velocity.y -= 0.001
             }

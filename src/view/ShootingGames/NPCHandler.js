@@ -45,7 +45,7 @@ class NPCHandler {
         const loader = new GLTFLoader().setPath(`${this.game.assetsPath}factory/`)
 
         const dracoLoader = new DRACOLoader()
-        dracoLoader.setDecoderPath( '/src/libs/three128/draco/' );
+        dracoLoader.setDecoderPath( 'node_modules/three/examples/jsm/libs/draco/' );
         loader.setDRACOLoader( dracoLoader );
 
         this.loadingBar.visible = true
@@ -101,9 +101,6 @@ class NPCHandler {
 
             npc.object.position.copy(this.randomWaypoint)
             npc.newPath(this.randomWaypoint)
-
-
-            //npc.active = 'idle'
 
             this.npcs.push(npc)
 

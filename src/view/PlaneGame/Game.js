@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { LoadingBar } from "@/libs/LoadingBar";
+import { LoadingBar } from "../../libs/LoadingBar";
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 import { Plane } from './Plane.js';
 import {Obstacles} from './Obstacles.js'
