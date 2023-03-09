@@ -53,7 +53,7 @@ class Controller {
         this.checkForGamepad()
 
 
-        if (true){ //('ontouchstart' in document.documentElement) {
+        if ('ontouchstart' in document.documentElement) {
             this.initOnscreenController()
         } else {
             this.initKeyboardControl()
@@ -164,7 +164,7 @@ class Controller {
                 this.keys.d = true
                 break;
             case 32:
-                this.fire()
+                this.fire(true)
                 break;
         }
     }
@@ -215,8 +215,12 @@ class Controller {
         this.onLook(-offsetY,offsetX)
     }
 
-    fire() {
+    fire(mode) {
         console.log("Fire")
+        // if (this.game.active)
+
+        this.user.firing = mode
+
     }
 
     onMove(up, right) {
@@ -240,7 +244,7 @@ class Controller {
         const fire = gamepad.buttons[7].pressed
         this.onMove(-leftStickY,leftStickX)
         this.onLook(-rightStickY,rightStickX)
-        if (fire) this.fire()
+        if (fire) this.fire(fire)
     }
 
     keyHandler() {
@@ -315,8 +319,11 @@ class Controller {
             } else {
                 this.user.action = 'walk'
             }
+
+            this.user.isFiring = false
+
         } else {
-            if (this.user !== undefined) this.user.action = 'idle'
+            if (this.user !== undefined && !this.user.isFiring) this.user.action = 'idle'
         }
 
         if (this.look.up == 0 && this.look.right == 0) {

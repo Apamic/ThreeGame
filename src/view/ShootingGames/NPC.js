@@ -134,20 +134,20 @@ class NPC {
 
 
     set action(name) {
-        if (this.actionName == name.toLowerCase()) return
+        if (this.actionName === name.toLowerCase()) return
 
         const cilp = this.animations[name.toLowerCase()]
 
         if (cilp !== undefined) {
             const action = this.mixer.clipAction(cilp)
 
-            if (name == 'shot') {
+            if (name === 'shot') {
                 action.clampWhenFinished = true
                 action.setLoop( THREE.LoopOnce )
             }
 
             action.reset()
-            const nofade = this.actionName == 'shot'
+            const nofade = this.actionName === 'shot'
             this.actionName = name.toLowerCase()
             action.play()
 
@@ -163,6 +163,9 @@ class NPC {
         }
     }
 
+    get position(){
+        return this.object.position
+    }
 
     update(dt) {
         const speed = this.speed

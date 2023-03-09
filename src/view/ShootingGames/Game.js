@@ -7,7 +7,7 @@ import { Pathfinding } from '../../libs/pathfinding/Pathfinding.js'
 import {NPCHandler} from './NPCHandler'
 import {User} from "./User";
 import { Controller } from './Controller.js'
-
+import { BulletHandler } from './BulletHandler.js'
 
 class Game {
     constructor() {
@@ -172,8 +172,9 @@ class Game {
 
 
     startRendering() {
-        if (this.npcHandler.ready && this.user.ready) {
+        if (this.npcHandler.ready && this.user.ready && this.bulletHandler == undefined) {
             this.controller = new Controller(this)
+            this.bulletHandler = new BulletHandler(this)
             this.renderer.setAnimationLoop(this.render.bind(this))
         }
 
@@ -270,6 +271,8 @@ class Game {
             }
 
         }
+
+        if (this.bulletHandler !== undefined) this.bulletHandler.update(dt)
 
         this.renderer.render( this.scene, this.camera )
     }
