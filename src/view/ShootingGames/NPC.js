@@ -97,7 +97,6 @@ class NPC {
                 const points = [player.position]
 
                 // 绘制调试线
-
                 this.calculatedPath.forEach((vertex) => {
                     points.push(vertex.clone())
                 })
@@ -132,6 +131,9 @@ class NPC {
 
     }
 
+    initSounds() {
+
+    }
 
     set action(name) {
         if (this.actionName === name.toLowerCase()) return
@@ -144,6 +146,7 @@ class NPC {
             if (name === 'shot') {
                 action.clampWhenFinished = true
                 action.setLoop( THREE.LoopOnce )
+                // this.dead = true
             }
 
             action.reset()
@@ -200,7 +203,7 @@ class NPC {
                 //从我们计算的路径中移除节点
                 this.calculatedPath.shift()
 
-                if (this.calculatedPath.length == 0) {
+                if (this.calculatedPath.length === 0) {
 
                     if (this.waypoints !== undefined) {
                         this.newPath(this.randomWaypoint)

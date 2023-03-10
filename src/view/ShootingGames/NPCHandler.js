@@ -173,6 +173,9 @@ class NPCHandler {
     }
 
 
+    reset() {
+
+    }
 }
 
 export {NPCHandler}

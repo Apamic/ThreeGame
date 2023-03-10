@@ -8,6 +8,8 @@ import {NPCHandler} from './NPCHandler'
 import {User} from "./User";
 import { Controller } from './Controller.js'
 import { BulletHandler } from './BulletHandler.js'
+import {UI} from "./UI";
+import {SFX} from "../../libs/SFX";
 
 class Game {
     constructor() {
@@ -25,6 +27,9 @@ class Game {
 
         this.camera.position.set( -10.6, 1.6, -1.46 );
         this.camera.rotation.y = -Math.PI*0.5;
+
+        // this.camera.position.set( -10.6, 1.6, -3.5 )
+        // this.camera.rotation.y = -Math.PI*0.6;
 
 
         let col = 0x201510
@@ -52,8 +57,8 @@ class Game {
         this.scene.add(light)
         this.light = light
 
-        const helper = new THREE.CameraHelper(light.shadow.camera)
-        this.scene.add(helper)
+        // const helper = new THREE.CameraHelper(light.shadow.camera)
+        // this.scene.add(helper)
 
         this.renderer = new THREE.WebGLRenderer({antialias:true,alpha:true})
         this.renderer.shadowMap.enabled = true
@@ -73,6 +78,17 @@ class Game {
 
     }
 
+    startGame() {
+        this.user.reset()
+        this.npcHandler.reset()
+        this.ui.ammo = 1
+        this.ui.health = 1
+        this.active = true
+    }
+
+    gameOver() {
+
+    }
 
     seeUser(pos,seethrough = false) {
 
@@ -110,10 +126,7 @@ class Game {
             } else {
                 userVisiable = (intersects[0].distance > dist)
             }
-
-
         }
-
         return userVisiable
     }
 
@@ -168,14 +181,29 @@ class Game {
         this.loadEnvironment()
         this.npcHandler = new NPCHandler(this)
         this.user = new User(this,new THREE.Vector3( -5.97, 0.021, -1.49),1.57)
+        this.ui = new UI(this)
+
+    }
+
+    initSounds() {
+        this.listener = new THREE.AudioListener()
+        this.camera.add(this.listener)
+        this.sfx = new SFX(this.camera,`${this.assetsPath}factory/sfx/`,this.listener)
+        this.sfx.load('atmos',true,0.1)
+        this.user.initSounds()
+        this.npcHandler.npcs.forEach(npc => npc.initSounds())
     }
 
 
     startRendering() {
-        if (this.npcHandler.ready && this.user.ready && this.bulletHandler == undefined) {
+        if (this.npcHandler.ready && this.user.ready && this.bulletHandler === undefined) {
             this.controller = new Controller(this)
             this.bulletHandler = new BulletHandler(this)
             this.renderer.setAnimationLoop(this.render.bind(this))
+
+            this.ui.visible = true
+            this.initSounds()
+
         }
 
     }
@@ -196,7 +224,7 @@ class Game {
 
             glft.scene.traverse(child => {
                 if (child.isMesh) {
-                    if (child.name == 'NavMesh') {
+                    if (child.name === 'NavMesh') {
                         this.NavMesh = child
                         this.NavMesh.geometry.rotateX(Math.PI/2)
                         this.NavMesh.quaternion.identity()
@@ -233,7 +261,7 @@ class Game {
                 const array = mergeObjects[prop];
                 let material;
                 array.forEach( object => {
-                    if (material == undefined){
+                    if (material === undefined){
                         material = object.material;
                     }else{
                         object.material = material;
@@ -242,8 +270,8 @@ class Game {
             }
 
 
-            this.loadingBar.visible = false
-            this.renderer.setAnimationLoop( this.render.bind(this))
+            this.loadingBar.visible = !this.loadingBar.loaded
+            //this.renderer.setAnimationLoop(this.render.bind(this))
 
         },xhr => {
             this.loadingBar.update('environment',xhr.loaded,xhr.total)
@@ -263,14 +291,9 @@ class Game {
 
         if (this.npcHandler !== undefined) this.npcHandler.update(dt)
 
-        if (this.user !== undefined && this.user.ready) {
-            this.user.update(dt)
+        if (this.user !== undefined)  this.user.update(dt)
 
-            if (this.controller !== undefined) {
-                this.controller.update(dt)
-            }
-
-        }
+        if (this.controller !== undefined)  this.controller.update(dt)
 
         if (this.bulletHandler !== undefined) this.bulletHandler.update(dt)
 

@@ -2,7 +2,7 @@ import {
     AnimationMixer,
     BufferGeometry,
     Group, Line,
-    LoopOnce,
+    LoopOnce, Mesh,
     MeshBasicMaterial,
     Quaternion,
     Raycaster,
@@ -10,6 +10,7 @@ import {
 } from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
+import {SFX} from "../../libs/SFX";
 
 
 class User {
@@ -181,26 +182,63 @@ class User {
 
     }
 
-    set action(name) {
 
-        if (this.actionName == name.toLowerCase() ) {
+    initSounds() {
+        const assetsPath = `${this.game.assetsPath}factory/sfx/`
+        this.sfx = new SFX(this.game.camera,assetsPath,this.game.listener)
+        this.sfx.load('footsteps',true,0.8,this.object)
+        this.sfx.load('eve-groan',false,0.8,this.object)
+        this.sfx.load('shot',false,0.8,this.object)
+    }
+
+
+    set action(name) {
+        name = name.toLowerCase()
+
+        if (this.actionName === name.toLowerCase() ) {
             return
         }
 
         console.log(`User action:${name}`)
+
+        if (name === 'shot') {
+            this.health -= 25
+
+            if (this.health > 0) {
+                name = 'hit'
+                //暂时禁用控制器
+                this.game.active = false
+                setTimeout(() => {
+                    this.game.active = true
+                },1000)
+            }
+
+            this.game.ui.health = Math.max(0,Math.min(this.health/100,1))
+            if (this.sfx) this.sfx.play('eve-groan')
+        }
+
+        if (this.sfx){
+            if (name === 'walk' || name === 'firing' || name === 'run') {
+                this.sfx.play('footsteps')
+            } else {
+                this.sfx.stop('footsteps')
+            }
+        }
+
+
 
         const clip = this.animations[name.toLowerCase()]
 
         if (clip !== undefined) {
             const action = this.mixer.clipAction(clip)
 
-            if (name == 'shot') {
+            if (name === 'shot') {
                 action.clampWhenFinished = true
                 action.setLoop(LoopOnce)
             }
 
             action.reset()
-            const nofade = this.actionName == 'shot'
+            const nofade = this.actionName === 'shot'
             this.actionName = name.toLowerCase()
             action.play()
 
@@ -236,6 +274,8 @@ class User {
     }
 
     shoot() {
+        if (this.ammo < 1) return
+
         if (this.bulletHandler === undefined) this.bulletHandler = this.game.bulletHandler
 
         this.aim.getWorldPosition(this.tmpVec)
@@ -243,6 +283,10 @@ class User {
 
         this.bulletHandler.createBullet(this.tmpVec,this.tmpQuat,false)
         this.bulletTime = this.game.clock.getElapsedTime()
+
+        this.ammo--
+        this.game.ui.ammo = Math.max(0,Math.min(this.ammo/100,1))
+        this.sfx.play('shot')
 
     }
 
@@ -271,6 +315,9 @@ class User {
     }
 
 
+    reset() {
+
+    }
 }
 
 
