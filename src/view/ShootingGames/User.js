@@ -193,6 +193,7 @@ class User {
 
 
     set action(name) {
+
         name = name.toLowerCase()
 
         if (this.actionName === name.toLowerCase() ) {
@@ -218,7 +219,7 @@ class User {
         }
 
         if (this.sfx){
-            if (name === 'walk' || name === 'firing' || name === 'run') {
+            if (name === 'walk' || name === 'firingwalk' || name === 'run') {
                 this.sfx.play('footsteps')
             } else {
                 this.sfx.stop('footsteps')
@@ -281,7 +282,7 @@ class User {
         this.aim.getWorldPosition(this.tmpVec)
         this.aim.getWorldQuaternion(this.tmpQuat)
 
-        this.bulletHandler.createBullet(this.tmpVec,this.tmpQuat,false)
+        this.bulletHandler.createBullet(this.tmpVec,this.tmpQuat)
         this.bulletTime = this.game.clock.getElapsedTime()
 
         this.ammo--

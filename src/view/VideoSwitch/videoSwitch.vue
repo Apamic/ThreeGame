@@ -5,6 +5,8 @@
 
       </video>
 
+      <audio src="https://ant-wh.oss-cn-hangzhou.aliyuncs.com/7b8b0342-c255-11ed-ae1b-581122ab9152.wav" controls></audio>
+
   </div>
 </template>
 
