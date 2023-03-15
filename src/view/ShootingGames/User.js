@@ -56,7 +56,6 @@ class User {
         this.rifleDirection.run = new Quaternion( 0.015, -0.793, 0.595, -0.131)
         this.rifleDirection.shot = new Quaternion(-0.082, -0.789, 0.594, -0.138)
 
-
     }
 
 
@@ -280,6 +279,7 @@ class User {
 
     }
 
+    //开枪
     shoot() {
         if (this.ammo < 1) return
 

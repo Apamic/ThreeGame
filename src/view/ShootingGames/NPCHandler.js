@@ -174,7 +174,9 @@ class NPCHandler {
 
 
     reset() {
-
+        this.npcs.forEach( npc => {
+            npc.reset()
+        })
     }
 }
 

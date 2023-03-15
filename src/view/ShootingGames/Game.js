@@ -244,7 +244,7 @@ class Game {
                         this.fans.push(child)
                     } else if (child.material.name.includes('elements2')) {
                         mergeObjects.elements2.push(child)
-                        child.castShadow = true
+                        child.castShadow = true //对象是否被渲染到阴影贴图中
                     } else if (child.material.name.includes('elements5')) {
                         mergeObjects.elements5.push(child)
                         child.castShadow = true
@@ -252,7 +252,7 @@ class Game {
                         mergeObjects.terrain.push(child)
                         child.castShadow = true
                     } else if (child.material.name.includes('sand')) {
-                        child.receiveShadow = true
+                        child.receiveShadow = true //材质是否接收阴影
                     } else if (child.material.name.includes('elements1')) {
                         child.castShadow = true
                         child.receiveShadow = true

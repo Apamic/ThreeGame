@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import {SFX} from "../../libs/SFX";
 
 class NPC {
     constructor(options) {
@@ -43,6 +44,7 @@ class NPC {
             options.animations.forEach((animations) => {
                 this.animations[animations.name.toLowerCase()] = animations
             })
+            //console.log(this.animations,'animations')
         }
     }
 
@@ -119,6 +121,8 @@ class NPC {
 
             }
         } else {
+            if (this.sfx) this.sfx.stop('footsteps')
+
             this.action = 'idle'
 
             if (this.pathfinder) {
@@ -132,8 +136,26 @@ class NPC {
     }
 
     initSounds() {
-
+        const assetsPath = `${this.app.assetsPath}factory/sfx/`
+        this.sfx = new SFX(this.app.camera,assetsPath,this.app.listener)
+        this.sfx.load('footsteps',true,0.6,this.object)
+        this.sfx.load('groan',false,0.6,this.object)
+        this.sfx.load('shot',false,0.6,this.object)
     }
+
+
+    reset() {
+        this.dead = false
+        this.object.position.copy(this.randomWaypoint)
+        let pt = this.randomWaypoint
+        let count = 0
+        while (this.object.position.distanceToSquared(pt < 1) && count < 10) {
+            pt = this.randomWaypoint
+            count++
+        }
+        this.newPath(pt)
+    }
+
 
     set action(name) {
         if (this.actionName === name.toLowerCase()) return
@@ -142,12 +164,16 @@ class NPC {
 
         if (cilp !== undefined) {
             const action = this.mixer.clipAction(cilp)
-            this.curAction = action
 
             if (name === 'shot') {
                 action.clampWhenFinished = true
                 action.setLoop( THREE.LoopOnce )
                 this.dead = true
+                if (this.sfx) {
+                    this.sfx.stop('footsteps')
+                    this.sfx.play('groan')
+                }
+                delete this.calculatedPath
             }
 
             action.reset()
@@ -162,7 +188,7 @@ class NPC {
                     this.curAction.crossFadeTo(action, 0.5)
                 }
             }
-
+            this.curAction = action
         }
     }
 
@@ -216,12 +242,14 @@ class NPC {
                     this.setTargetDirection(this.calculatedPath[0].clone())
                 }
 
-            } else {
-                if (!this.dead && this.waypoints !== undefined) {
-                    this.newPath(this.randomWaypoint)
-                }
+            }
+
+        } else {
+            if (!this.dead && this.waypoints !== undefined) {
+                this.newPath(this.randomWaypoint)
             }
         }
+
     }
 }
 

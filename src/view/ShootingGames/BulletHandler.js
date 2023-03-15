@@ -71,6 +71,7 @@ class BulletHandler {
             }
 
             if (hit) {
+                //击中动画
                 target.action = 'shot'
                 bullet.userData.remove = true
             } else {
