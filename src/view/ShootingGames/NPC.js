@@ -16,11 +16,11 @@ class NPC {
 
         options.app.scene.add(this.pathLines)
 
-        this.showPath = options.showPath | false
+        this.showPath = options.showPath || false
 
         this.waypoints = options.waypoints
 
-        this.dead = true
+        this.dead = false
 
         this.speed = options.speed
 
@@ -142,15 +142,16 @@ class NPC {
 
         if (cilp !== undefined) {
             const action = this.mixer.clipAction(cilp)
+            this.curAction = action
 
             if (name === 'shot') {
                 action.clampWhenFinished = true
                 action.setLoop( THREE.LoopOnce )
-                // this.dead = true
+                this.dead = true
             }
 
             action.reset()
-            const nofade = this.actionName === 'shot'
+            const nofade = this.actionName == 'shot'
             this.actionName = name.toLowerCase()
             action.play()
 
@@ -162,7 +163,6 @@ class NPC {
                 }
             }
 
-            this.curAction = action
         }
     }
 

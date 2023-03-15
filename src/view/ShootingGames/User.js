@@ -19,6 +19,8 @@ class User {
         this.root.position.copy(pos)
         this.root.rotation.set(0,heading,0,'XYZ')
 
+        this.startInfo = {pos: pos.clone(),heading}
+
         this.game = game
 
         this.camera = game.camera
@@ -196,7 +198,7 @@ class User {
 
         name = name.toLowerCase()
 
-        if (this.actionName === name.toLowerCase() ) {
+        if (this.actionName === name.toLowerCase()) {
             return
         }
 
@@ -230,16 +232,21 @@ class User {
 
         const clip = this.animations[name.toLowerCase()]
 
+
         if (clip !== undefined) {
             const action = this.mixer.clipAction(clip)
+
+            //this.curAction = action
 
             if (name === 'shot') {
                 action.clampWhenFinished = true
                 action.setLoop(LoopOnce)
+                this.dead = true
+                //this.game.gameOver()
             }
 
             action.reset()
-            const nofade = this.actionName === 'shot'
+            const nofade = this.actionName == 'shot'
             this.actionName = name.toLowerCase()
             action.play()
 
@@ -247,31 +254,30 @@ class User {
                 if (nofade) {
                     this.curAction.enabled = false
                 } else {
-                    this.curAction.crossFadeTo(action,0.5)
+                    this.curAction.crossFadeTo(action,1)
                 }
             }
-
             this.curAction = action
-
-            if (this.rifle && this.rifleDirection) {
-                const q = this.rifleDirection[name.toLowerCase()]
-
-                if (q !== undefined) {
-                    const start = new Quaternion()
-                    start.copy(this.rifle.quaternion)
-
-                    this.rifle.quaternion.copy(q)
-                    this.rifle.rotateX(1.57)
-
-                    const end = new Quaternion()
-                    end.copy(this.rifle.quaternion)
-                    this.rotateRifle = {start,end,time: 0}
-                    this.rifle.quaternion.copy(start)
-
-                }
-            }
-
         }
+
+        if (this.rifle && this.rifleDirection) {
+            const q = this.rifleDirection[name.toLowerCase()]
+
+            if (q !== undefined) {
+                const start = new Quaternion()
+                start.copy(this.rifle.quaternion)
+
+                this.rifle.quaternion.copy(q)
+                this.rifle.rotateX(1.57)
+
+                const end = new Quaternion()
+                end.copy(this.rifle.quaternion)
+                this.rotateRifle = {start,end,time: 0}
+                this.rifle.quaternion.copy(start)
+
+            }
+        }
+
     }
 
     shoot() {
@@ -317,7 +323,14 @@ class User {
 
 
     reset() {
-
+        //this.position = this.startInfo.pos
+        //this.root.rotation.set(0,this.startInfo.heading,0,'XYZ')
+        //this.root.rotateY(0.7)
+        this.ammo = 100
+        this.health = 100
+        this.action = 'idle'
+        this.speed = 0
+        this.isFiring = false
     }
 }
 

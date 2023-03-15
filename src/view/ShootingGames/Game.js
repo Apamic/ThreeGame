@@ -90,12 +90,12 @@ class Game {
 
 
 
-        setTimeout( () => this.user.action = 'shot',2000)
+        //setTimeout( () => this.user.action = 'hit',2000)
 
     }
 
     gameOver() {
-
+        console.log('gameOver')
     }
 
     seeUser(pos,seethrough = false) {
