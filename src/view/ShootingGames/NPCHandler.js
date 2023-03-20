@@ -87,6 +87,7 @@ class NPCHandler {
                     child.frustumCulled = false
 
                     if (child.name.includes('Rifle')) {
+
                         rifle = child
                     }
 
@@ -94,7 +95,7 @@ class NPCHandler {
             })
 
             if (rifle) {
-                const geometry = new BufferGeometry().setFromPoints([new Vector3(0,0,0),new Vector3(1,0,0)])
+                const geometry = new BufferGeometry().setFromPoints([new Vector3(0,0,0),new Vector3(1,0,0)]) //通过点队列设置该 BufferGeometry 的 attribute
 
                 const line = new Line(geometry)
                 line.name = 'aim'
@@ -102,9 +103,9 @@ class NPCHandler {
 
                 rifle.add(line)
                 line.position.set(0,0,0.5)
+                aim = line
                 line.visible = false
             }
-
 
             const options = {
                 object,
@@ -115,6 +116,8 @@ class NPCHandler {
                 waypoints: this.waypoints,
                 zone: 'factory',
                 name: 'swat-guy',
+                rifle,
+                aim
             }
 
             const npc = new NPC(options)
