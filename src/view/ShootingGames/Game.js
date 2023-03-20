@@ -116,7 +116,7 @@ class Game {
         this.sfx.play('atmos')
 
 
-        setTimeout( () => this.user.action = 'shot',2000)
+        //setTimeout( () => this.user.action = 'shot',2000)
 
     }
 

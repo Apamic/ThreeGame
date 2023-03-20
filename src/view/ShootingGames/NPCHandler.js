@@ -1,6 +1,6 @@
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
-import {Raycaster,Skeleton} from "three";
+import {BufferGeometry, Line, Raycaster, Skeleton, Vector3} from "three";
 import {NPC} from "./NPC"
 
 
@@ -79,11 +79,32 @@ class NPCHandler {
         gltfs.forEach(gltf => {
             const object = gltf.scene
 
+            let rifle, aim;
+
             object.traverse( child => {
                 if (child.isMesh){
-                    child.castShadow = true;
+                    child.castShadow = true
+                    child.frustumCulled = false
+
+                    if (child.name.includes('Rifle')) {
+                        rifle = child
+                    }
+
                 }
             })
+
+            if (rifle) {
+                const geometry = new BufferGeometry().setFromPoints([new Vector3(0,0,0),new Vector3(1,0,0)])
+
+                const line = new Line(geometry)
+                line.name = 'aim'
+                line.scale.x = 50
+
+                rifle.add(line)
+                line.position.set(0,0,0.5)
+                line.visible = false
+            }
+
 
             const options = {
                 object,
