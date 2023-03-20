@@ -8,6 +8,14 @@ import {NPCHandler} from './NPCHandler'
 import {User} from "./User";
 import { Controller } from './Controller.js'
 import { BulletHandler } from './BulletHandler.js'
+
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+
+
+import { Tween } from '../../libs/Toon3D.js';
+
 import {UI} from "./UI";
 import {SFX} from "../../libs/SFX";
 
@@ -69,14 +77,33 @@ class Game {
 
         //const controls = new OrbitControls( this.camera, this.renderer.domElement )
 
+        this.loadEnvironment()
+
+        this.initPostProcessing()
+
         this.load()
 
         this.raycaster = new THREE.Raycaster()
         this.tmpVec = new THREE.Vector3()
 
+        this.active = false
+
         window.addEventListener('resize', this.resize.bind(this) )
 
     }
+
+    initPostProcessing(){
+
+    }
+
+    tintScreen() {
+
+    }
+
+    removeTween() {
+
+    }
+
 
     startGame() {
         this.user.reset()
@@ -89,13 +116,17 @@ class Game {
         this.sfx.play('atmos')
 
 
-
-        //setTimeout( () => this.user.action = 'hit',2000)
+        setTimeout( () => this.user.action = 'shot',2000)
 
     }
 
     gameOver() {
         console.log('gameOver')
+        this.active = false;
+        this.ui.showGameOver()
+        this.sfx.stop('atmos')
+
+
     }
 
     seeUser(pos,seethrough = false) {
@@ -186,7 +217,7 @@ class Game {
     }
 
     load() {
-        this.loadEnvironment()
+        //this.loadEnvironment()
         this.npcHandler = new NPCHandler(this)
         this.user = new User(this,new THREE.Vector3( -5.97, 0.021, -1.49),1.57)
         this.ui = new UI(this)
@@ -301,7 +332,7 @@ class Game {
 
         if (this.user !== undefined)  this.user.update(dt)
 
-        if (this.controller !== undefined)  this.controller.update(dt)
+        if (this.controller !== undefined )  this.controller.update(dt)
 
         if (this.bulletHandler !== undefined) this.bulletHandler.update(dt)
 

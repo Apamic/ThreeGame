@@ -217,9 +217,10 @@ class Controller {
 
     fire(mode) {
         console.log("Fire")
-        // if (this.game.active)
 
-        this.user.firing = mode
+        if (this.game.active) {
+            this.user.firing = mode
+        }
 
     }
 
@@ -261,6 +262,17 @@ class Controller {
     }
 
     update(dt=0.0167) {
+
+        if (!this.game.active) {
+            let lerpSpeed = 0.03
+            this.cameraBase.getWorldPosition(this.tmpVec3)
+            this.game.seeUser(this.tmpVec3, true)
+            this.cameraBase.getWorldQuaternion(this.tmpQuat)
+            this.camera.position.lerp(this.tmpVec3, lerpSpeed)
+            this.camera.quaternion.slerp(this.tmpQuat, lerpSpeed)
+            return
+        }
+
 
         let playerMoved = false
         let speed

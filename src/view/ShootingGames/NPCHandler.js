@@ -46,7 +46,7 @@ class NPCHandler {
         const loader = new GLTFLoader().setPath(`${this.game.assetsPath}factory/`)
 
         const dracoLoader = new DRACOLoader()
-        dracoLoader.setDecoderPath( 'node_modules/three/examples/jsm/libs/draco/' );
+        dracoLoader.setDecoderPath( 'node_modules/three/examples/jsm/libs/draco/')
         loader.setDRACOLoader( dracoLoader );
 
         this.loadingBar.visible = true

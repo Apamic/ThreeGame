@@ -227,21 +227,16 @@ class User {
             }
         }
 
-
-
         const clip = this.animations[name.toLowerCase()]
-
 
         if (clip !== undefined) {
             const action = this.mixer.clipAction(clip)
-
-            //this.curAction = action
 
             if (name === 'shot') {
                 action.clampWhenFinished = true
                 action.setLoop(LoopOnce)
                 this.dead = true
-                //this.game.gameOver()
+                this.game.gameOver()
             }
 
             action.reset()
@@ -253,7 +248,7 @@ class User {
                 if (nofade) {
                     this.curAction.enabled = false
                 } else {
-                    this.curAction.crossFadeTo(action,1)
+                    this.curAction.crossFadeTo(action,0.5)
                 }
             }
             this.curAction = action
