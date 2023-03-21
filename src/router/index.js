@@ -31,6 +31,11 @@ const routes = [
         name: 'FixedPointStretchScaling',
         component: () => import('@/view/FixedPointStretchScaling/FixedPointStretchScaling.vue')
     },
+    {
+        path: '/billiards',
+        name: 'billiards',
+        component: () => import('@/view/billiards/billiards.vue')
+    },
 ]
 
 
