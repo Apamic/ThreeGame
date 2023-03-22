@@ -3,7 +3,9 @@
 </template>
 
 <script type="module"  setup>
+import {Game1} from './Game1.js'
 import {Game} from './Game.js'
+
 
 import {onMounted} from "vue"
 
