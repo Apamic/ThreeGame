@@ -4,6 +4,7 @@ import { CannonHelper } from '../../libs/CannonHelper.js'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js"
 import {Table} from "./Table.js"
 import {Ball} from './Ball.js'
+import {Table1} from "./Table1.js"
 
 class Game {
     constructor() {
@@ -16,11 +17,15 @@ class Game {
         const container = document.createElement('div')
         document.body.appendChild(container)
 
+        this.debug = true
+
+        this.clock = new THREE.Clock()
+
         this.camera = new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,20)
         this.camera.position.set(-3,1.5,0)
 
         this.scene = new THREE.Scene()
-        this.scene.background = new THREE.Color(0xaaaaaa)
+        this.scene.background = new THREE.Color(0x000000)
 
         const ambient = new THREE.HemisphereLight(0xffffff,0xbbbbff,0.3)
         this.scene.add(ambient)
@@ -58,7 +63,7 @@ class Game {
         const w = new CANNON.World()
         w.gravity.set(0,-9.82,0) //设置重力
 
-        //当物体在一定时间内低于一定速度时，就开始运动
+        //不允许休眠
         w.allowSleep = true
 
         w.fixedTimeStep = 1.0/60.0 //定义固定时长步骤,将在
@@ -90,7 +95,9 @@ class Game {
 
     initScene() {
         //创建一个简单的table
-        this.table = new Table(this)
+        //this.table = new Table(this)
+        this.table = new Table1(this)
+
         this.createBalls()
     }
 
@@ -117,7 +124,6 @@ class Game {
         }
 
         this.cueball = this.balls[0]
-
     }
 
     resize() {

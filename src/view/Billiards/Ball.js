@@ -55,8 +55,8 @@ class Ball {
         body.linearDamping = body.angularDamping = 0.5  //阻尼系数(惯性)
         body.allowSleep = true
 
-        body.sleepSpeedLimit = 2
-        body.sleepTimeLimit = 0.1
+        body.sleepSpeedLimit = 2  //如果速度< 1，身体会感到困倦 (speed == norm of velocity)
+        body.sleepTimeLimit = 0.1 //身体在0.1秒的困倦后进入休眠
 
         return body
     }
