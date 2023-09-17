@@ -1,4 +1,4 @@
-import * as THREE from 'THREE';
+import * as THREE from 'three';
 import * as CANNON from './cannon-es.js';
 
 class CannonHelper{
